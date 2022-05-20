@@ -32,6 +32,8 @@ describe('PrismaService', () => {
       const onPrismaClientSpy = jest.fn();
       const appMock = {} as INestApplication;
 
+      prismaService.$on = onPrismaClientSpy;
+
       await prismaService.enableShutdownHooks(appMock);
 
       expect(onPrismaClientSpy).toHaveBeenCalledWith(
