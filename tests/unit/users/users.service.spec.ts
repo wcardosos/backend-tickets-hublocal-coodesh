@@ -15,6 +15,7 @@ describe('UsersService', () => {
     user: {
       create: jest.fn(),
       findUnique: findUniqueMock,
+      delete: jest.fn(),
     },
   };
 
@@ -31,6 +32,10 @@ describe('UsersService', () => {
 
     usersService = module.get<UsersService>(UsersService);
     prismaService = module.get<PrismaService>(PrismaService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('create', () => {
@@ -78,6 +83,28 @@ describe('UsersService', () => {
         },
       });
       expect(user).toBeFalsy();
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a user when exists', async () => {
+      usersService.findById = jest.fn().mockResolvedValue('user');
+
+      await usersService.delete('id');
+
+      expect(prismaService.user.delete).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+    });
+
+    it('Should not delete the user not exists', async () => {
+      usersService.findById = jest.fn().mockResolvedValue(null);
+
+      await usersService.delete('id');
+
+      expect(prismaService.user.delete).not.toHaveBeenCalled();
     });
   });
 });
