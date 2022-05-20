@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @default(uuid()) @id
+  name String
+  username String @unique
+  password String
+
+  enterprises Enterprise[]
+  tickets Ticket[]
+}
+
+model Enterprise {
+  id String @default(uuid()) @id
+  name String
+  cnpj String
+  description String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  responsibleId String
+  mainResponsibleId String
+
+  locations Location[]
+  responsibles Responsible[]
+}
+
+model Location {
+  id String @default(uuid()) @id
+  name String
+  address String
+  enterprise Enterprise @relation(fields: [enterpriseId], references: [id], onDelete: Cascade)
+  enterpriseId String
+  mainResponsibleId String
+
+  tickets Ticket[]
+  responsibles Responsible[]
+}
+
+model Responsible {
+  id String @default(uuid()) @id
+  name String
+  telephone String
+  address String
+  enterprise Enterprise? @relation(fields: [enterpriseId], references: [id], onDelete: Cascade)
+  location Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  enterpriseId String
+  locationId String
+
+  tickets Ticket[]
+}
+
+model Ticket {
+  id String @default(uuid()) @id
+  title String
+  createdAt DateTime
+  updatedAt DateTime
+  status String
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responsible Responsible @relation(fields: [responsibleId], references: [id], onDelete: Cascade)
+  locationId String
+  userId String
+  responsibleId String
+}
