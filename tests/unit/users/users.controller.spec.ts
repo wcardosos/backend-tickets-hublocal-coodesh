@@ -3,6 +3,8 @@ import { CreateUserDto } from '../../../src/users/dto/create-user.dto';
 import { HashManager } from '../../../src/lib/HashManager';
 import { UsersController } from '../../../src/users/users.controller';
 import { UsersService } from '../../../src/users/users.service';
+import { Response } from 'express';
+import { HttpStatus } from '@nestjs/common';
 
 jest.mock('../../../src/lib/HashManager');
 
@@ -11,9 +13,11 @@ describe('UsersController', () => {
   let usersService: UsersService;
 
   const hashValueHashManagerSpy = jest.spyOn(HashManager, 'hash');
+  const findByIdMock = jest.fn();
 
   const usersServiceMock = {
     create: jest.fn(),
+    findById: findByIdMock,
   };
 
   beforeEach(async () => {
@@ -43,6 +47,42 @@ describe('UsersController', () => {
         name: 'name',
         username: 'username',
         password: 'hashed password',
+      });
+    });
+  });
+
+  describe('findById', () => {
+    const idMock = 'id';
+    const responseMock = {} as Response;
+
+    responseMock.json = jest.fn();
+    responseMock.status = jest.fn().mockReturnValue({
+      json: responseMock.json,
+    });
+
+    it('Should return the user when exists', async () => {
+      const userMock = {
+        id: 'id',
+        name: 'name',
+        username: 'username',
+        password: 'password',
+      };
+
+      findByIdMock.mockResolvedValueOnce(userMock);
+
+      await usersController.findById(idMock, responseMock);
+
+      expect(responseMock.json).toHaveBeenCalledWith({ user: userMock });
+    });
+
+    it('Should return a message when the user not found', async () => {
+      findByIdMock.mockResolvedValueOnce(null);
+
+      await usersController.findById(idMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        message: 'User not found',
       });
     });
   });

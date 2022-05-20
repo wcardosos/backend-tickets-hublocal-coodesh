@@ -9,9 +9,12 @@ describe('UsersService', () => {
   let usersService: UsersService;
   let prismaService: PrismaService;
 
+  const findUniqueMock = jest.fn();
+
   const prismaServiceMock = {
     user: {
       create: jest.fn(),
+      findUnique: findUniqueMock,
     },
   };
 
@@ -47,6 +50,34 @@ describe('UsersService', () => {
           password: 'password',
         },
       });
+    });
+  });
+
+  describe('findById', () => {
+    it('Should return the user when exists', async () => {
+      findUniqueMock.mockResolvedValueOnce('user');
+
+      const user = await usersService.findById('id');
+
+      expect(findUniqueMock).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+      expect(user).toBe('user');
+    });
+
+    it('Should return null when the user not exists', async () => {
+      findUniqueMock.mockResolvedValueOnce(null);
+
+      const user = await usersService.findById('id');
+
+      expect(findUniqueMock).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+      expect(user).toBeFalsy();
     });
   });
 });

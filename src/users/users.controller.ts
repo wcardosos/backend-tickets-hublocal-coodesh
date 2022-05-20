@@ -8,7 +8,9 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -40,8 +42,15 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findById(@Param('id') id: string, @Res() response: Response) {
+    const user = await this.usersService.findById(id);
+    if (user) {
+      return response.json({ user });
+    }
+
+    return response
+      .status(HttpStatus.BAD_REQUEST)
+      .json({ message: 'User not found' });
   }
 
   @Patch(':id')
