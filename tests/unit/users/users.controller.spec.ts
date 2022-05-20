@@ -18,6 +18,7 @@ describe('UsersController', () => {
   const usersServiceMock = {
     create: jest.fn(),
     findById: findByIdMock,
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -84,6 +85,14 @@ describe('UsersController', () => {
       expect(responseMock.json).toHaveBeenCalledWith({
         message: 'User not found',
       });
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a user', async () => {
+      await usersController.delete('id');
+
+      expect(usersService.delete).toHaveBeenCalledWith('id');
     });
   });
 });
