@@ -42,7 +42,17 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async delete(id: string): Promise<void | null> {
+    const user = await this.findById(id);
+
+    if (user) {
+      await this.prismaService.user.delete({
+        where: {
+          id,
+        },
+      });
+    }
+
+    return null;
   }
 }
