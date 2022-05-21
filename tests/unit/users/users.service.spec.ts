@@ -86,6 +86,34 @@ describe('UsersService', () => {
     });
   });
 
+  describe('findByUsername', () => {
+    it('Should return the user when exists', async () => {
+      findUniqueMock.mockResolvedValueOnce('user');
+
+      const user = await usersService.findByUsername('username');
+
+      expect(findUniqueMock).toHaveBeenCalledWith({
+        where: {
+          username: 'username',
+        },
+      });
+      expect(user).toBe('user');
+    });
+
+    it('Should return null when the user not exists', async () => {
+      findUniqueMock.mockResolvedValueOnce(null);
+
+      const user = await usersService.findByUsername('username');
+
+      expect(findUniqueMock).toHaveBeenCalledWith({
+        where: {
+          username: 'username',
+        },
+      });
+      expect(user).toBeFalsy();
+    });
+  });
+
   describe('delete', () => {
     it('Should delete a user when exists', async () => {
       usersService.findById = jest.fn().mockResolvedValue('user');

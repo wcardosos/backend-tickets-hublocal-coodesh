@@ -38,6 +38,20 @@ export class UsersService {
     return user;
   }
 
+  async findByUsername(username: string): Promise<User | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
