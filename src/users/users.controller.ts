@@ -53,6 +53,21 @@ export class UsersController {
       .json({ message: 'User not found' });
   }
 
+  @Get('/username/:username')
+  async findByUsername(
+    @Param('username') username: string,
+    @Res() response: Response,
+  ) {
+    const user = await this.usersService.findByUsername(username);
+    if (user) {
+      return response.json({ user });
+    }
+
+    return response
+      .status(HttpStatus.BAD_REQUEST)
+      .json({ message: 'User not found' });
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
