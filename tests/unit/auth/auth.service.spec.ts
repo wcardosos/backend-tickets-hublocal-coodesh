@@ -34,11 +34,12 @@ describe('AuthService', () => {
   });
 
   describe('validateUser', () => {
+    findByUsernameMock.mockImplementation(() => ({
+      user: 'user',
+      password: 'hashed password',
+    }));
+
     it('Should validate a user', async () => {
-      findByUsernameMock.mockImplementationOnce(() => ({
-        user: 'user',
-        password: 'hashed password',
-      }));
       compareHashManagerSpy.mockResolvedValueOnce(true);
 
       const result = await authService.validateUser('username', 'password');
@@ -49,6 +50,28 @@ describe('AuthService', () => {
         'hashed password',
       );
       expect(result).toBe(true);
+    });
+
+    it('Should not validate when the user not exists', async () => {
+      findByUsernameMock.mockImplementationOnce(() => null);
+
+      const result = await authService.validateUser('username', 'password');
+
+      expect(usersService.findByUsername).toHaveBeenCalledWith('username');
+      expect(result).toBe(false);
+    });
+
+    it('Should not validate a user when the password is incorrect', async () => {
+      compareHashManagerSpy.mockResolvedValueOnce(false);
+
+      const result = await authService.validateUser('username', 'password');
+
+      expect(usersService.findByUsername).toHaveBeenCalledWith('username');
+      expect(compareHashManagerSpy).toHaveBeenCalledWith(
+        'password',
+        'hashed password',
+      );
+      expect(result).toBe(false);
     });
   });
 });
