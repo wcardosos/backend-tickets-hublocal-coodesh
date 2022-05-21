@@ -14,10 +14,12 @@ describe('UsersController', () => {
 
   const hashValueHashManagerSpy = jest.spyOn(HashManager, 'hash');
   const findByIdMock = jest.fn();
+  const findByUsernameMock = jest.fn();
 
   const usersServiceMock = {
     create: jest.fn(),
     findById: findByIdMock,
+    findByUsername: findByUsernameMock,
     delete: jest.fn(),
   };
 
@@ -29,6 +31,10 @@ describe('UsersController', () => {
 
     usersController = module.get<UsersController>(UsersController);
     usersService = module.get<UsersService>(UsersService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('create', () => {
@@ -80,6 +86,42 @@ describe('UsersController', () => {
       findByIdMock.mockResolvedValueOnce(null);
 
       await usersController.findById(idMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        message: 'User not found',
+      });
+    });
+  });
+
+  describe('findByUsername', () => {
+    const usernameMock = 'username';
+    const responseMock = {} as Response;
+
+    responseMock.json = jest.fn();
+    responseMock.status = jest.fn().mockReturnValue({
+      json: responseMock.json,
+    });
+
+    it('Should return the user when exists', async () => {
+      const userMock = {
+        id: 'id',
+        name: 'name',
+        username: 'username',
+        password: 'password',
+      };
+
+      findByUsernameMock.mockResolvedValueOnce(userMock);
+
+      await usersController.findByUsername(usernameMock, responseMock);
+
+      expect(responseMock.json).toHaveBeenCalledWith({ user: userMock });
+    });
+
+    it('Should return a message when the user not found', async () => {
+      findByUsernameMock.mockResolvedValueOnce(null);
+
+      await usersController.findByUsername(usernameMock, responseMock);
 
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
       expect(responseMock.json).toHaveBeenCalledWith({
