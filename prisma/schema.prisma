@@ -24,7 +24,6 @@ model Enterprise {
   description String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  responsibleId String
 
   locations Location[]
   responsibles Responsible[]
