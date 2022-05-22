@@ -45,7 +45,11 @@ model Responsible {
   id String @default(uuid()) @id
   name String
   telephone String
-  address String
+  zipcode String
+  street String
+  neighborhood String
+  city String
+  state String
   isMain Boolean @default(false)
   enterprise Enterprise? @relation(fields: [enterpriseId], references: [id], onDelete: Cascade)
   location Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
