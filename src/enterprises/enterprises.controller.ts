@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { EnterprisesService } from './enterprises.service';
 import { CreateEnterpriseDto } from './dto/create-enterprise.dto';
 import { UpdateEnterpriseDto } from './dto/update-enterprise.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Response } from 'express';
 
 @Controller('enterprises')
 export class EnterprisesController {
@@ -29,9 +32,18 @@ export class EnterprisesController {
     return this.enterprisesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.enterprisesService.findById(id);
+  async findById(@Param('id') id: string, @Res() response: Response) {
+    const enterprise = await this.enterprisesService.findById(id);
+
+    if (!enterprise) {
+      return response
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: 'Enterprise not found' });
+    }
+
+    return response.json(enterprise);
   }
 
   @Patch(':id')

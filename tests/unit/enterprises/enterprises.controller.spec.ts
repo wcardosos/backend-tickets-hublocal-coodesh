@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Response } from 'express';
 import { EnterprisesController } from '../../../src/enterprises/enterprises.controller';
 import { EnterprisesService } from '../../../src/enterprises/enterprises.service';
 
@@ -7,11 +9,15 @@ describe('EnterprisesController', () => {
   let enterprisesService: EnterprisesService;
 
   const findAllMock = jest.fn();
+  const findByIdMock = jest.fn();
 
   const enterprisesServiceMock = {
     create: jest.fn(),
     findAll: findAllMock,
+    findById: findByIdMock,
   };
+
+  const responseMock = {} as Response;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -85,6 +91,33 @@ describe('EnterprisesController', () => {
 
       expect(enterprisesService.findAll).toHaveBeenCalled();
       expect(result).toHaveLength(4);
+    });
+  });
+
+  describe('findById', () => {
+    const responseJsonMock = jest.fn();
+    responseMock.json = responseJsonMock;
+    responseMock.status = jest.fn().mockReturnValue({
+      json: responseJsonMock,
+    });
+
+    it('Should return when the enterprise exists', async () => {
+      findByIdMock.mockImplementationOnce(() => 'enterprise');
+
+      await enterprisesController.findById('id', responseMock);
+
+      expect(responseMock.json).toHaveBeenCalledWith('enterprise');
+    });
+
+    it('Should return a error message when the enterprise not exists', async () => {
+      findByIdMock.mockImplementationOnce(() => null);
+
+      await enterprisesController.findById('id', responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        message: 'Enterprise not found',
+      });
     });
   });
 });

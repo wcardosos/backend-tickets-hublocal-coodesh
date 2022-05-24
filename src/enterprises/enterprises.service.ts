@@ -33,8 +33,18 @@ export class EnterprisesService {
     return this.prismaService.enterprise.findMany();
   }
 
-  findById(id: string) {
-    return `This action returns a #${id} enterprise`;
+  async findById(id: string): Promise<Enterprise | null> {
+    const enterprise = await this.prismaService.enterprise.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!enterprise) {
+      return null;
+    }
+
+    return enterprise;
   }
 
   update(id: string, updateEnterpriseDto: UpdateEnterpriseDto) {

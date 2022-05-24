@@ -7,11 +7,13 @@ describe('EnterprisesService', () => {
   let prismaService: PrismaService;
 
   const findManyMock = jest.fn();
+  const findUniqueMock = jest.fn();
 
   const prismaServiceMock = {
     enterprise: {
       create: jest.fn(),
       findMany: findManyMock,
+      findUnique: findUniqueMock,
     },
   };
 
@@ -92,6 +94,34 @@ describe('EnterprisesService', () => {
 
       expect(prismaService.enterprise.findMany).toHaveBeenCalled();
       expect(result).toHaveLength(4);
+    });
+  });
+
+  describe('findById', () => {
+    it('Should return an enterprise when exists', async () => {
+      findUniqueMock.mockImplementationOnce(() => 'enterprise');
+
+      const result = await enterpriseService.findById('id');
+
+      expect(prismaService.enterprise.findUnique).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+      expect(result).toBe('enterprise');
+    });
+
+    it('Should return an enterprise when exists', async () => {
+      findUniqueMock.mockImplementationOnce(() => false);
+
+      const result = await enterpriseService.findById('id');
+
+      expect(prismaService.enterprise.findUnique).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+      expect(result).toBe(null);
     });
   });
 });
