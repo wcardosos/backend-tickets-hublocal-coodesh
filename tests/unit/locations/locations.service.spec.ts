@@ -12,6 +12,7 @@ describe('LocationsService', () => {
     location: {
       create: jest.fn(),
       findUnique: findUniqueMock,
+      delete: jest.fn(),
     },
   };
 
@@ -84,6 +85,18 @@ describe('LocationsService', () => {
       const result = await locationsService.findById('id');
 
       expect(result).toBe(null);
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a enterprise', async () => {
+      await locationsService.delete('id');
+
+      expect(prismaService.location.delete).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
     });
   });
 });
