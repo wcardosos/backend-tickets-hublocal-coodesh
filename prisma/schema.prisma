@@ -32,6 +32,7 @@ model Enterprise {
 model Location {
   id String @default(uuid()) @id
   name String
+  zipcode String
   street String
   neighborhood String
   city String
