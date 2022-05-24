@@ -47,8 +47,22 @@ export class EnterprisesService {
     return enterprise;
   }
 
-  update(id: string, updateEnterpriseDto: UpdateEnterpriseDto) {
-    return `This action updates a #${id} enterprise`;
+  async update(
+    id: string,
+    updateEnterpriseDto: UpdateEnterpriseDto,
+  ): Promise<void> {
+    const { name, cnpj, description } = updateEnterpriseDto;
+
+    await this.prismaService.enterprise.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        cnpj,
+        description,
+      },
+    });
   }
 
   async delete(id: string): Promise<void> {

@@ -46,12 +46,16 @@ export class EnterprisesController {
     return response.json(enterprise);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEnterpriseDto: UpdateEnterpriseDto,
+    @Res() response: Response,
   ) {
-    return this.enterprisesService.update(id, updateEnterpriseDto);
+    await this.enterprisesService.update(id, updateEnterpriseDto);
+
+    return response.end();
   }
 
   @UseGuards(JwtAuthGuard)

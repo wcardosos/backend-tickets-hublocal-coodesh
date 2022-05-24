@@ -14,6 +14,7 @@ describe('EnterprisesService', () => {
       create: jest.fn(),
       findMany: findManyMock,
       findUnique: findUniqueMock,
+      update: jest.fn(),
       delete: jest.fn(),
     },
   };
@@ -127,6 +128,30 @@ describe('EnterprisesService', () => {
         },
       });
       expect(result).toBe(null);
+    });
+  });
+
+  describe('update', () => {
+    it('Should update a enterprise', async () => {
+      const idMock = 'id';
+      const enterpriseDataMock = {
+        name: 'name',
+        cnpj: 'cnpj',
+        description: 'description',
+      };
+
+      await enterpriseService.update(idMock, enterpriseDataMock);
+
+      expect(prismaService.enterprise.update).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+        data: {
+          name: 'name',
+          cnpj: 'cnpj',
+          description: 'description',
+        },
+      });
     });
   });
 
