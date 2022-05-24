@@ -54,8 +54,11 @@ export class EnterprisesController {
     return this.enterprisesService.update(id, updateEnterpriseDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.enterprisesService.delete(id);
+  async delete(@Param('id') id: string, @Res() response: Response) {
+    await this.enterprisesService.delete(id);
+
+    return response.end();
   }
 }

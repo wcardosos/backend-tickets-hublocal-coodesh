@@ -15,9 +15,16 @@ describe('EnterprisesController', () => {
     create: jest.fn(),
     findAll: findAllMock,
     findById: findByIdMock,
+    delete: jest.fn(),
   };
 
   const responseMock = {} as Response;
+  const responseJsonMock = jest.fn();
+  responseMock.json = responseJsonMock;
+  responseMock.status = jest.fn().mockReturnValue({
+    json: responseJsonMock,
+  });
+  responseMock.end = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -95,12 +102,6 @@ describe('EnterprisesController', () => {
   });
 
   describe('findById', () => {
-    const responseJsonMock = jest.fn();
-    responseMock.json = responseJsonMock;
-    responseMock.status = jest.fn().mockReturnValue({
-      json: responseJsonMock,
-    });
-
     it('Should return when the enterprise exists', async () => {
       findByIdMock.mockImplementationOnce(() => 'enterprise');
 
@@ -118,6 +119,15 @@ describe('EnterprisesController', () => {
       expect(responseMock.json).toHaveBeenCalledWith({
         message: 'Enterprise not found',
       });
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a enterprise', async () => {
+      await enterprisesController.delete('id', responseMock);
+
+      expect(enterprisesService.delete).toHaveBeenCalledWith('id');
+      expect(responseMock.end).toHaveBeenCalled();
     });
   });
 });
