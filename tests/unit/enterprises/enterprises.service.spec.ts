@@ -6,9 +6,12 @@ describe('EnterprisesService', () => {
   let enterpriseService: EnterprisesService;
   let prismaService: PrismaService;
 
+  const findManyMock = jest.fn();
+
   const prismaServiceMock = {
     enterprise: {
       create: jest.fn(),
+      findMany: findManyMock,
     },
   };
 
@@ -73,6 +76,22 @@ describe('EnterprisesService', () => {
           },
         },
       });
+    });
+  });
+
+  describe('findAll', () => {
+    it('Should return all enterprises', async () => {
+      findManyMock.mockImplementationOnce(() => [
+        'enterprise 1',
+        'enterprise 2',
+        'enterprise 3',
+        'enterprise 4',
+      ]);
+
+      const result = await enterpriseService.findAll();
+
+      expect(prismaService.enterprise.findMany).toHaveBeenCalled();
+      expect(result).toHaveLength(4);
     });
   });
 });
