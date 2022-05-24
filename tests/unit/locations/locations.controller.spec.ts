@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import { LocationsController } from '../../../src/locations/locations.controller';
 import { LocationsService } from '../../../src/locations/locations.service';
 
@@ -12,6 +12,7 @@ describe('LocationsController', () => {
   const locationsServiceMock = {
     create: jest.fn(),
     findById: findByIdMock,
+    delete: jest.fn(),
   };
 
   const responseMock = {} as Response;
@@ -80,6 +81,15 @@ describe('LocationsController', () => {
       expect(responseJsonMock).toHaveBeenCalledWith({
         message: 'Location not found',
       });
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a location', async () => {
+      await locationsController.delete('id', responseMock);
+
+      expect(locationsService.delete).toHaveBeenCalledWith('id');
+      expect(responseMock.end).toHaveBeenCalled();
     });
   });
 });

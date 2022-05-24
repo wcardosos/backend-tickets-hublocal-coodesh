@@ -14,7 +14,7 @@ import { LocationsService } from './locations.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Response } from 'express';
+import { response, Response } from 'express';
 
 @Controller('locations')
 export class LocationsController {
@@ -53,8 +53,11 @@ export class LocationsController {
     return this.locationsService.update(+id, updateLocationDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.locationsService.remove(+id);
+  async delete(@Param('id') id: string, @Res() response: Response) {
+    await this.locationsService.delete(id);
+
+    return response.end();
   }
 }
