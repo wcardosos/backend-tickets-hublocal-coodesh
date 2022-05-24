@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { LocationsService } from './locations.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Response } from 'express';
 
 @Controller('locations')
 export class LocationsController {
@@ -28,9 +31,18 @@ export class LocationsController {
     return this.locationsService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locationsService.findOne(+id);
+  async findById(@Param('id') id: string, @Res() response: Response) {
+    const location = await this.locationsService.findById(id);
+
+    if (!location) {
+      return response
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: 'Location not found' });
+    }
+
+    return response.json(location);
   }
 
   @Patch(':id')
