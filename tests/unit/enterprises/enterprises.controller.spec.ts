@@ -6,8 +6,11 @@ describe('EnterprisesController', () => {
   let enterprisesController: EnterprisesController;
   let enterprisesService: EnterprisesService;
 
+  const findAllMock = jest.fn();
+
   const enterprisesServiceMock = {
     create: jest.fn(),
+    findAll: findAllMock,
   };
 
   beforeEach(async () => {
@@ -66,6 +69,22 @@ describe('EnterprisesController', () => {
           state: 'state',
         },
       });
+    });
+  });
+
+  describe('findAll', () => {
+    it('Should return all enterprises', async () => {
+      findAllMock.mockImplementationOnce(() => [
+        'enterprise 1',
+        'enterprise 2',
+        'enterprise 3',
+        'enterprise 4',
+      ]);
+
+      const result = await enterprisesController.findAll();
+
+      expect(enterprisesService.findAll).toHaveBeenCalled();
+      expect(result).toHaveLength(4);
     });
   });
 });

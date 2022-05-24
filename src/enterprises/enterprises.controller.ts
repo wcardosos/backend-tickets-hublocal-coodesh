@@ -23,6 +23,7 @@ export class EnterprisesController {
     return this.enterprisesService.create(createEnterpriseDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.enterprisesService.findAll();

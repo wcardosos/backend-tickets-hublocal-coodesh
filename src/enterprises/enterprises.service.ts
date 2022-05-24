@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Enterprise } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEnterpriseDto } from './dto/create-enterprise.dto';
 import { UpdateEnterpriseDto } from './dto/update-enterprise.dto';
@@ -28,8 +29,8 @@ export class EnterprisesService {
     });
   }
 
-  findAll() {
-    return `This action returns all enterprises`;
+  async findAll(): Promise<Enterprise[]> {
+    return this.prismaService.enterprise.findMany();
   }
 
   findById(id: string) {
