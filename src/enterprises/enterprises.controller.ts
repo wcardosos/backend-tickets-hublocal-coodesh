@@ -6,17 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { EnterprisesService } from './enterprises.service';
 import { CreateEnterpriseDto } from './dto/create-enterprise.dto';
 import { UpdateEnterpriseDto } from './dto/update-enterprise.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('enterprises')
 export class EnterprisesController {
   constructor(private readonly enterprisesService: EnterprisesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createEnterpriseDto: CreateEnterpriseDto) {
+  async create(@Body() createEnterpriseDto: CreateEnterpriseDto) {
     return this.enterprisesService.create(createEnterpriseDto);
   }
 
