@@ -24,7 +24,6 @@ model Enterprise {
   description String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  responsibleId String
 
   locations Location[]
   responsibles Responsible[]
@@ -53,8 +52,8 @@ model Responsible {
   isMain Boolean @default(false)
   enterprise Enterprise? @relation(fields: [enterpriseId], references: [id], onDelete: Cascade)
   location Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  enterpriseId String
-  locationId String
+  enterpriseId String?
+  locationId String?
 
   tickets Ticket[]
 }
