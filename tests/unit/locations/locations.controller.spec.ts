@@ -65,10 +65,10 @@ describe('LocationsController', () => {
     it('Should return a location', async () => {
       findByIdMock.mockResolvedValueOnce('location');
 
-      const result = await locationsController.findById('id', responseMock);
+      await locationsController.findById('id', responseMock);
 
       expect(locationsService.findById).toHaveBeenCalledWith('id');
-      expect(result).toBe('location');
+      expect(responseMock.json).toHaveBeenCalledWith('location');
     });
 
     it('Should return a error message when the location not exists', async () => {

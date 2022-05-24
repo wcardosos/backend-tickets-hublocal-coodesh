@@ -42,7 +42,7 @@ export class LocationsController {
         .json({ message: 'Location not found' });
     }
 
-    return location;
+    return response.json(location);
   }
 
   @Patch(':id')
