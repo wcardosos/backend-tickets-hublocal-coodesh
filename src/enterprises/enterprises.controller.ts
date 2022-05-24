@@ -32,6 +32,7 @@ export class EnterprisesController {
     return this.enterprisesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findById(@Param('id') id: string, @Res() response: Response) {
     const enterprise = await this.enterprisesService.findById(id);
