@@ -7,9 +7,8 @@ import { UpdateEnterpriseDto } from './dto/update-enterprise.dto';
 export class EnterprisesService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(createEnterpriseDto: CreateEnterpriseDto): Promise<void> {
-    const { name, cnpj, description, responsible, userId } =
-      createEnterpriseDto;
+  async create(enterpriseData: CreateEnterpriseDto): Promise<void> {
+    const { name, cnpj, description, responsible, userId } = enterpriseData;
 
     await this.prismaService.enterprise.create({
       data: {
