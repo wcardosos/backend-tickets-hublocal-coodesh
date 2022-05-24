@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Location } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -30,8 +31,18 @@ export class LocationsService {
     return `This action returns all locations`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} location`;
+  async findById(id: string): Promise<Location | null> {
+    const location = await this.prismaService.location.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!location) {
+      return null;
+    }
+
+    return location;
   }
 
   update(id: number, updateLocationDto: UpdateLocationDto) {

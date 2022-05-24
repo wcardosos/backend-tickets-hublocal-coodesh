@@ -6,9 +6,12 @@ describe('LocationsService', () => {
   let locationsService: LocationsService;
   let prismaService: PrismaService;
 
+  const findUniqueMock = jest.fn();
+
   const prismaServiceMock = {
     location: {
       create: jest.fn(),
+      findUnique: findUniqueMock,
     },
   };
 
@@ -58,6 +61,29 @@ describe('LocationsService', () => {
           },
         },
       });
+    });
+  });
+
+  describe('findById', () => {
+    it('Should return a location when it exists', async () => {
+      findUniqueMock.mockResolvedValueOnce('location');
+
+      const result = await locationsService.findById('id');
+
+      expect(prismaService.location.findUnique).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
+      expect(result).toBe('location');
+    });
+
+    it('Should return null when the location not exists', async () => {
+      findUniqueMock.mockResolvedValueOnce(false);
+
+      const result = await locationsService.findById('id');
+
+      expect(result).toBe(null);
     });
   });
 });
