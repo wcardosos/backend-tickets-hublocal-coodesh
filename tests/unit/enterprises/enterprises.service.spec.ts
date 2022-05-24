@@ -14,6 +14,7 @@ describe('EnterprisesService', () => {
       create: jest.fn(),
       findMany: findManyMock,
       findUnique: findUniqueMock,
+      delete: jest.fn(),
     },
   };
 
@@ -30,6 +31,10 @@ describe('EnterprisesService', () => {
 
     enterpriseService = module.get<EnterprisesService>(EnterprisesService);
     prismaService = module.get<PrismaService>(PrismaService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -122,6 +127,18 @@ describe('EnterprisesService', () => {
         },
       });
       expect(result).toBe(null);
+    });
+  });
+
+  describe('delete', () => {
+    it('Should delete a enterprise when it exists', async () => {
+      await enterpriseService.delete('id');
+
+      expect(prismaService.enterprise.delete).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+      });
     });
   });
 });
