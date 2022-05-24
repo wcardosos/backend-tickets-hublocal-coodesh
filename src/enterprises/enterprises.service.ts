@@ -51,7 +51,11 @@ export class EnterprisesService {
     return `This action updates a #${id} enterprise`;
   }
 
-  delete(id: string) {
-    return `This action removes a #${id} enterprise`;
+  async delete(id: string): Promise<void> {
+    await this.prismaService.enterprise.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
