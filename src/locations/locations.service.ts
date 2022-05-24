@@ -45,8 +45,26 @@ export class LocationsService {
     return location;
   }
 
-  update(id: number, updateLocationDto: UpdateLocationDto) {
-    return `This action updates a #${id} location`;
+  async update(
+    id: string,
+    updateLocationDto: UpdateLocationDto,
+  ): Promise<void> {
+    const { name, zipcode, street, neighborhood, city, state } =
+      updateLocationDto;
+
+    await this.prismaService.location.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        zipcode,
+        street,
+        neighborhood,
+        city,
+        state,
+      },
+    });
   }
 
   async delete(id: string): Promise<void> {

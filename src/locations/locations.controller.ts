@@ -45,12 +45,16 @@ export class LocationsController {
     return response.json(location);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateLocationDto: UpdateLocationDto,
+    @Res() response: Response,
   ) {
-    return this.locationsService.update(+id, updateLocationDto);
+    await this.locationsService.update(id, updateLocationDto);
+
+    return response.end();
   }
 
   @UseGuards(JwtAuthGuard)

@@ -12,6 +12,7 @@ describe('LocationsController', () => {
   const locationsServiceMock = {
     create: jest.fn(),
     findById: findByIdMock,
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -38,6 +39,10 @@ describe('LocationsController', () => {
     locationsService = module.get<LocationsService>(LocationsService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(locationsController).toBeDefined();
   });
@@ -59,6 +64,32 @@ describe('LocationsController', () => {
       expect(locationsService.create).toHaveBeenCalledWith(
         createLocationDataMock,
       );
+    });
+  });
+
+  describe('update', () => {
+    const updateLocationDataMock = {
+      name: 'name',
+      zipcode: 'zipcode',
+      street: 'street',
+      neighborhood: 'neighborhood',
+      city: 'city',
+      state: 'state',
+      enterpriseId: 'enterpriseId',
+    };
+
+    it('Should update a location', async () => {
+      await locationsController.update(
+        'id',
+        updateLocationDataMock,
+        responseMock,
+      );
+
+      expect(locationsService.update).toHaveBeenCalledWith(
+        'id',
+        updateLocationDataMock,
+      );
+      expect(responseMock.end).toHaveBeenCalled();
     });
   });
 
