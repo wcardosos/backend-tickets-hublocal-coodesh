@@ -12,6 +12,7 @@ describe('LocationsService', () => {
     location: {
       create: jest.fn(),
       findUnique: findUniqueMock,
+      update: jest.fn(),
       delete: jest.fn(),
     },
   };
@@ -85,6 +86,35 @@ describe('LocationsService', () => {
       const result = await locationsService.findById('id');
 
       expect(result).toBe(null);
+    });
+  });
+
+  describe('update', () => {
+    it('Should update a location', async () => {
+      const locationDataMock = {
+        name: 'name',
+        zipcode: 'zipcode',
+        street: 'street',
+        neighborhood: 'neighborhood',
+        city: 'city',
+        state: 'state',
+      };
+
+      await locationsService.update('id', locationDataMock);
+
+      expect(prismaService.location.update).toHaveBeenCalledWith({
+        where: {
+          id: 'id',
+        },
+        data: {
+          name: 'name',
+          zipcode: 'zipcode',
+          street: 'street',
+          neighborhood: 'neighborhood',
+          city: 'city',
+          state: 'state',
+        },
+      });
     });
   });
 
