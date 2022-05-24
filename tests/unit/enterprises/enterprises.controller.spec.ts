@@ -15,6 +15,7 @@ describe('EnterprisesController', () => {
     create: jest.fn(),
     findAll: findAllMock,
     findById: findByIdMock,
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -119,6 +120,29 @@ describe('EnterprisesController', () => {
       expect(responseMock.json).toHaveBeenCalledWith({
         message: 'Enterprise not found',
       });
+    });
+  });
+
+  describe('update', () => {
+    it('Should delete a enterprise', async () => {
+      const idMock = 'id';
+      const enterpriseDataMock = {
+        name: 'name',
+        cnpj: 'cnpj',
+        description: 'description',
+      };
+
+      await enterprisesController.update(
+        idMock,
+        enterpriseDataMock,
+        responseMock,
+      );
+
+      expect(enterprisesService.update).toHaveBeenCalledWith(
+        'id',
+        enterpriseDataMock,
+      );
+      expect(responseMock.end).toHaveBeenCalled();
     });
   });
 
