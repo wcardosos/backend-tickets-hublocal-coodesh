@@ -38,6 +38,10 @@ export class EnterprisesService {
       where: {
         id,
       },
+      include: {
+        locations: true,
+        responsibles: true,
+      },
     });
 
     if (!enterprise) {
