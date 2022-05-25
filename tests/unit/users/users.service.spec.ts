@@ -60,7 +60,11 @@ describe('UsersService', () => {
 
   describe('findById', () => {
     it('Should return the user when exists', async () => {
-      findUniqueMock.mockResolvedValueOnce('user');
+      findUniqueMock.mockResolvedValueOnce({
+        id: 'id',
+        username: 'username',
+        name: 'name',
+      });
 
       const user = await usersService.findById('id');
 
@@ -68,8 +72,17 @@ describe('UsersService', () => {
         where: {
           id: 'id',
         },
+        select: {
+          id: true,
+          username: true,
+          name: true,
+        },
       });
-      expect(user).toBe('user');
+      expect(user).toEqual({
+        id: 'id',
+        username: 'username',
+        name: 'name',
+      });
     });
 
     it('Should return null when the user not exists', async () => {
@@ -80,6 +93,11 @@ describe('UsersService', () => {
       expect(findUniqueMock).toHaveBeenCalledWith({
         where: {
           id: 'id',
+        },
+        select: {
+          id: true,
+          username: true,
+          name: true,
         },
       });
       expect(user).toBeFalsy();

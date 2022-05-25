@@ -4,6 +4,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+export interface IUserWithoutPassword {
+  id: string;
+  username: string;
+  name: string;
+}
+
 @Injectable()
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
@@ -24,10 +30,15 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<IUserWithoutPassword | null> {
     const user = await this.prismaService.user.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        username: true,
+        name: true,
       },
     });
 
