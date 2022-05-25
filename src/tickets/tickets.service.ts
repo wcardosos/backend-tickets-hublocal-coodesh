@@ -1,11 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { IdGenerator } from '../lib/IdGenerator';
 
 @Injectable()
 export class TicketsService {
-  create(createTicketDto: CreateTicketDto) {
-    return 'This action adds a new ticket';
+  constructor(private prismaService: PrismaService) {}
+
+  async create(createTicketDto: CreateTicketDto): Promise<void> {
+    const { locationName, locationId, userId, responsibleId } = createTicketDto;
+    const id = IdGenerator.generate();
+    const DEFAULT_STATUS = 'PENDENTE';
+
+    await this.prismaService.ticket.create({
+      data: {
+        id,
+        title: `${id}-${locationName}`,
+        status: DEFAULT_STATUS,
+        location: {
+          connect: { id: locationId },
+        },
+        user: {
+          connect: { id: userId },
+        },
+        responsible: {
+          connect: { id: responsibleId },
+        },
+      },
+    });
   }
 
   findAll() {
