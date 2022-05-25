@@ -113,11 +113,15 @@ describe('EnterprisesService', () => {
         where: {
           id: 'id',
         },
+        include: {
+          locations: true,
+          responsibles: true,
+        },
       });
       expect(result).toBe('enterprise');
     });
 
-    it('Should return an enterprise when exists', async () => {
+    it('Should return null when an enterprise not exists', async () => {
       findUniqueMock.mockImplementationOnce(() => false);
 
       const result = await enterpriseService.findById('id');
@@ -125,6 +129,10 @@ describe('EnterprisesService', () => {
       expect(prismaService.enterprise.findUnique).toHaveBeenCalledWith({
         where: {
           id: 'id',
+        },
+        include: {
+          locations: true,
+          responsibles: true,
         },
       });
       expect(result).toBe(null);
